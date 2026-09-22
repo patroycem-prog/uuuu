@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Travel Around the World — Cruise Bookings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B2E38;
+    --navy-deep: #071E26;
+    --teal: #1B5E6C;
+    --gold: #C89B3C;
+    --gold-light: #E3C374;
+    --cream: #F5EFE1;
+    --ivory: #FBF8F2;
+    --ink: #16232B;
+    --white: #FFFFFF;
+    --line: rgba(11,46,56,0.14);
+
+    --bg: var(--cream);
+    --surface: var(--ivory);
+    --text: var(--ink);
+    --text-soft: rgba(22,35,43,0.66);
+    --header-bg: var(--navy);
+    --header-text: var(--ivory);
+    --card-shadow: 0 1px 0 rgba(11,46,56,0.06);
+
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-body: 'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D1B21;
+      --surface: #122630;
+      --text: #EDE6D6;
+      --text-soft: rgba(237,230,214,0.66);
+      --line: rgba(237,230,214,0.14);
+      --header-bg: #071E26;
+      --header-text: #EDE6D6;
+      --card-shadow: 0 1px 0 rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D1B21;
+    --surface: #122630;
+    --text: #EDE6D6;
+    --text-soft: rgba(237,230,214,0.66);
+    --line: rgba(237,230,214,0.14);
+    --header-bg: #071E26;
+    --header-text: #EDE6D6;
+    --card-shadow: 0 1px 0 rgba(0,0,0,0.3);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  img, svg { max-width: 100%; display: block; }
+  a { color: inherit; }
+  button { font-family: inherit; }
+
+  .scrollx { overflow-x: auto; }
+
+  /* ---------- Header ---------- */
+  header.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--header-bg);
+    color: var(--header-text);
+    padding-top: env(safe-area-inset-top, 0px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .header-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px 24px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--header-text);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .brand-mark {
+    width: 34px; height: 34px;
+    flex-shrink: 0;
+  }
+  .brand-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.18rem;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  nav.main-nav {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  nav.main-nav button {
+    background: transparent;
+    border: none;
+    color: var(--header-text);
+    opacity: 0.75;
+    font-size: 0.95rem;
+    padding: 10px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: opacity 0.15s ease, background 0.15s ease;
+  }
+  nav.main-nav button:hover { opacity: 1; background: rgba(255,255,255,0.08); }
+  nav.main-nav button.active { opacity: 1; background: rgba(255,255,255,0.12); }
+  nav.main-nav button:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Layout helpers ---------- */
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+  .view { display: none; }
+  .view.active { display: block; animation: viewIn 0.4s ease; }
+  @keyframes viewIn { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
+  @media (prefers-reduced-motion: reduce) {
+    .view.active { animation: none; }
+  }
+
+  section { padding: 72px 0; }
+  section.tight { padding: 48px 0; }
+
+  h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; margin: 0; }
+  h1 { font-size: clamp(2.4rem, 5vw, 4rem); line-height: 1.04; letter-spacing: -0.01em; }
+  h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.1; }
+  h3 { font-size: 1.3rem; line-height: 1.25; }
+  p { margin: 0; color: var(--text-soft); }
+  .eyebrow-plain { color: var(--gold); font-family: var(--font-display); font-style: italic; font-size: 1.05rem; margin-bottom: 10px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 8px;
+    padding: 14px 26px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-gold { background: var(--gold); color: var(--navy-deep); }
+  .btn-gold:hover { background: var(--gold-light); }
+  .btn-outline { background: transparent; border-color: currentColor; color: var(--header-text); }
+  .btn-outline:hover { background: rgba(255,255,255,0.08); }
+  .btn-dark { background: var(--navy); color: var(--ivory); }
+  .btn-dark:hover { background: var(--navy-deep); }
+  .btn-ghost { background: transparent; color: var(--text); border-color: var(--line); }
+  .btn-ghost:hover { background: var(--surface); }
+  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .btn-block { width: 100%; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: var(--ivory);
+    position: relative;
+    overflow: hidden;
+    padding: 88px 0 0 0;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .hero p.lede { color: rgba(251,248,242,0.78); font-size: 1.12rem; max-width: 46ch; margin-top: 20px; }
+  .hero-cta { display: flex; gap: 14px; margin-top: 34px; flex-wrap: wrap; }
+  .hero-stats { display: flex; gap: 36px; margin-top: 56px; flex-wrap: wrap; }
+  .hero-stats div strong { display: block; font-family: var(--font-display); font-size: 1.8rem; color: var(--gold-light); }
+  .hero-stats div span { font-size: 0.85rem; color: rgba(251,248,242,0.6); }
+  .hero-art { padding: 20px 0 0; }
+  .wave-strip { display: block; width: 100%; height: auto; margin-top: 60px; }
+
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-art { order: -1; }
+  }
+
+  /* ---------- Destination cards ---------- */
+  .dest-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 22px;
+    margin-top: 40px;
+  }
+  .dest-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .dest-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(11,46,56,0.14); }
+  .dest-art { aspect-ratio: 16/10; width: 100%; position: relative; }
+  .sale-flag {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--gold); color: var(--navy-deep);
+    font-size: 0.74rem; font-weight: 700;
+    padding: 5px 10px; border-radius: 999px;
+    letter-spacing: 0.01em;
+  }
+  .was-price { display: block; font-size: 0.86rem; color: var(--text-soft); text-decoration: line-through; margin-top: 2px; }
+  .dest-body { padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .dest-region { font-size: 0.78rem; letter-spacing: 0.03em; color: var(--gold); font-weight: 600; }
+  .dest-ports { font-size: 0.86rem; color: var(--text-soft); }
+  .dest-meta { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); }
+  .dest-price strong { font-family: var(--font-display); font-size: 1.3rem; color: var(--text); }
+  .dest-price span { display: block; font-size: 0.78rem; color: var(--text-soft); }
+  .dest-nights { font-size: 0.85rem; color: var(--text-soft); }
+  .dest-select { margin-top: 14px; }
+
+  /* ---------- Filter pills ---------- */
+  .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+  .pill {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  .pill.active { background: var(--navy); color: var(--ivory); border-color: var(--navy); }
+
+  /* ---------- Feature blocks ---------- */
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 44px; }
+  .feature { border-top: 2px solid var(--gold); padding-top: 18px; }
+  .feature p { margin-top: 10px; }
+  @media (max-width: 860px) { .feature-grid { grid-template-columns: 1fr; } }
+
+  section.dark-band { background: var(--navy); color: var(--ivory); }
+  section.dark-band p { color: rgba(251,248,242,0.72); }
+  section.dark-band h2 { color: var(--ivory); }
+
+  /* ---------- Forms ---------- */
+  .layout-2col { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: start; margin-top: 40px; }
+  @media (max-width: 900px) { .layout-2col { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 30px;
+  }
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 0.86rem; font-weight: 600; margin-bottom: 7px; }
+  .field .hint { font-size: 0.78rem; color: var(--text-soft); margin-top: 5px; }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.96rem;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field-row3 { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 560px) { .field-row, .field-row3 { grid-template-columns: 1fr; } }
+  .field.error input, .field.error select { border-color: #B84545; }
+  .field .error-msg { font-size: 0.78rem; color: #B84545; margin-top: 5px; display: none; }
+  .field.error .error-msg { display: block; }
+
+  .cabin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (max-width: 560px) { .cabin-grid { grid-template-columns: 1fr; } }
+  .cabin-opt {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px;
+    cursor: pointer;
+    position: relative;
+    background: var(--bg);
+  }
+  .cabin-opt input { position: absolute; opacity: 0; }
+  .cabin-opt.selected { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); background: rgba(200,155,60,0.08); }
+  .cabin-opt strong { display: block; font-size: 0.94rem; }
+  .cabin-opt span { font-size: 0.8rem; color: var(--text-soft); }
+
+  /* ---------- Summary card ---------- */
+  .summary-card { position: sticky; top: 96px; }
+  .summary-card h3 { margin-bottom: 4px; }
+  .summary-line { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--line); font-size: 0.92rem; }
+  .summary-line:last-of-type { border-bottom: none; }
+  .summary-total { display: flex; justify-content: space-between; padding-top: 16px; margin-top: 4px; border-top: 1px solid var(--line); font-family: var(--font-display); font-size: 1.3rem; }
+  .ticket-notch { position: relative; }
+  .empty-note { padding: 40px 30px; text-align: center; }
+  .empty-note .btn { margin-top: 18px; }
+
+  /* ---------- Confirmation ---------- */
+  .confirm-wrap { max-width: 640px; margin: 0 auto; text-align: center; }
+  .stamp { width: 92px; height: 92px; margin: 0 auto 26px; }
+  .ref-box {
+    display: inline-block;
+    margin: 22px 0 0;
+    padding: 14px 24px;
+    border: 1px dashed var(--gold);
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+  }
+  .confirm-summary { text-align: left; margin-top: 40px; }
+  .confirm-actions { display: flex; gap: 14px; justify-content: center; margin-top: 34px; flex-wrap: wrap; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    background: var(--navy-deep);
+    color: rgba(251,248,242,0.6);
+    padding: 44px 0 calc(30px + env(safe-area-inset-bottom, 0px));
+    font-size: 0.86rem;
+  }
+  footer .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  footer .brand-name { color: var(--ivory); }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--navy);
+    color: var(--ivory);
+    padding: 14px 22px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .spinner {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid rgba(11,46,56,0.25);
+    border-top-color: var(--navy-deep);
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .steps { display: flex; gap: 8px; align-items: center; font-size: 0.82rem; color: var(--text-soft); margin-bottom: 8px; }
+  .steps b { color: var(--text); }
+
+  .sale-banner {
+    background: var(--gold);
+    color: var(--navy-deep);
+    text-align: center;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 10px 16px;
+  }
+  .sale-banner strong { font-family: var(--font-display); font-weight: 700; }
+  .sale-banner-inner { max-width: 1180px; margin: 0 auto; }
+
+  .discount-line { color: #B84545; }
+  .savings-note { font-size: 0.78rem; color: var(--gold); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <button class="brand" data-nav="home" aria-label="Travel Around the World — Home">
+      <svg class="brand-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="19" stroke="#C89B3C" stroke-width="1.4"/>
+        <path d="M8 22c2.5-3 5-5 12-5s9.5 2 12 5" stroke="#C89B3C" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M11 27c2-1.6 4-2.4 9-2.4s7 .8 9 2.4" stroke="#E3C374" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M20 6v9" stroke="#C89B3C" stroke-width="1.4"/>
+        <path d="M20 9l6 3-6 3z" fill="#C89B3C"/>
+      </svg>
+      <span class="brand-name">Travel Around the World</span>
+    </button>
+    <nav class="main-nav" id="mainNav">
+      <button data-nav="home">Home</button>
+      <button data-nav="destinations">Destinations</button>
+      <button data-nav="booking">My Booking</button>
+    </nav>
+  </div>
+</header>
+
+<div id="saleBanner"></div>
+
+<!-- ================= HOME ================= -->
+<main id="view-home" class="view">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow-plain">Est. sailings to 6 continents</p>
+        <h1>The world looks different from the water.</h1>
+        <p class="lede">Pick a coastline, a season, or just a feeling — we'll find the ship. Ninety-four itineraries, from a long weekend in the Caribbean to twelve nights among the ice in Antarctica.</p>
+        <div class="hero-cta">
+          <button class="btn btn-gold" data-nav="destinations">Browse destinations</button>
+          <button class="btn btn-outline" data-nav="booking">Continue a booking</button>
+        </div>
+        <div class="hero-stats">
+          <div><strong>32</strong><span>countries served</span></div>
+          <div><strong>140+</strong><span>ports of call</span></div>
+          <div><strong>4.8/5</strong><span>average sailing rating</span></div>
+        </div>
+      </div>
+      <div class="hero-art">
+        <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="210" cy="200" r="150" fill="none" stroke="rgba(227,195,116,0.35)" stroke-width="1"/>
+          <circle cx="210" cy="200" r="110" fill="none" stroke="rgba(227,195,116,0.22)" stroke-width="1"/>
+          <path id="routeArc" d="M70 260 C 130 150, 290 150, 350 240" fill="none" stroke="#E3C374" stroke-width="1.4" stroke-dasharray="4 6"/>
+          <circle cx="70" cy="260" r="4" fill="#E3C374"/>
+          <circle cx="200" cy="158" r="4" fill="#E3C374"/>
+          <circle cx="350" cy="240" r="4" fill="#E3C374"/>
+          <g transform="translate(150,255)">
+            <path d="M0 40 L100 40 L88 58 L12 58 Z" fill="#F5EFE1"/>
+            <rect x="18" y="10" width="10" height="30" fill="#1B5E6C"/>
+            <rect x="36" y="0" width="10" height="40" fill="#1B5E6C"/>
+            <rect x="54" y="14" width="10" height="26" fill="#1B5E6C"/>
+            <rect x="70" y="20" width="8" height="20" fill="#C89B3C"/>
+            <path d="M-8 58 Q50 74 108 58" stroke="rgba(227,195,116,0.5)" stroke-width="2" fill="none"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <svg class="wave-strip" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 30 Q 150 0 300 30 T 600 30 T 900 30 T 1200 30 V60 H0 Z" fill="var(--bg)"/>
+    </svg>
+  </section>
+
+  <section class="tight">
+    <div class="wrap">
+      <p class="eyebrow-plain">Where to next</p>
+      <h2>A handful of favourites to start</h2>
+      <div class="dest-grid" id="homeDestGrid"></div>
+      <div style="text-align:center; margin-top:40px;">
+        <button class="btn btn-dark" data-nav="destinations">See every destination</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="dark-band">
+    <div class="wrap">
+      <p class="eyebrow-plain" style="color: var(--gold-light);">Why sail with us</p>
+      <h2>Booking a cruise shouldn't feel like homework</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>Real prices, up front</h3>
+          <p>What you see on a destination card is the starting fare for that cabin class — no surprise fees appear at checkout.</p>
+        </div>
+        <div class="feature">
+          <h3>Every cabin class, compared</h3>
+          <p>Interior, ocean view, balcony or suite — see exactly what changes between them before you choose.</p>
+        </div>
+        <div class="feature">
+          <h3>One page for the whole trip</h3>
+          <p>Your itinerary, cabin, passengers and payment live in one place, so you're never hunting for a confirmation email.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tight">
+    <div class="wrap">
+      <p class="eyebrow-plain">How it works</p>
+      <h2>Three steps from browsing to boarding</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <h3>1. Choose your sailing</h3>
+          <p>Filter by region and season, then pick the itinerary that fits your dates.</p>
+        </div>
+        <div class="feature">
+          <h3>2. Build your booking</h3>
+          <p>Select a cabin, add your guests, and watch the total update as you go.</p>
+        </div>
+        <div class="feature">
+          <h3>3. Confirm and pack</h3>
+          <p>Pay securely and get a booking reference you can pull up any time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= DESTINATIONS ================= -->
+<main id="view-destinations" class="view">
+  <section class="tight">
+    <div class="wrap">
+      <p class="eyebrow-plain">All destinations</p>
+      <h2>Every itinerary we sail</h2>
+      <p style="margin-top:12px; max-width: 60ch;">Twenty-plus ships, eight regions. Filter below, or scroll — each card shows the starting fare per person, based on double occupancy in an interior cabin.</p>
+      <div class="filter-row" id="filterRow"></div>
+      <div class="dest-grid" id="allDestGrid"></div>
+    </div>
+  </section>
+</main>
+
+<!-- ================= BOOKING ================= -->
+<main id="view-booking" class="view">
+  <section class="tight">
+    <div class="wrap" id="bookingWrap">
+      <!-- filled by JS -->
+    </div>
+  </section>
+</main>
+
+<!-- ================= PAYMENT ================= -->
+<main id="view-payment" class="view">
+  <section class="tight">
+    <div class="wrap" id="paymentWrap">
+      <!-- filled by JS -->
+    </div>
+  </section>
+</main>
+
+<!-- ================= CONFIRMATION ================= -->
+<main id="view-confirmation" class="view">
+  <section class="tight">
+    <div class="wrap" id="confirmationWrap">
+      <!-- filled by JS -->
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand-name" style="font-family: var(--font-display);">Travel Around the World</span>
+    <span>&copy; 2026 Travel Around the World Cruise Co. — sample site for demonstration.</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- Data ---------------- */
+  var REGIONS = ["Caribbean", "Mediterranean", "Alaska", "Northern Europe", "Africa", "South Pacific", "Asia", "Polar"];
+
+  var DESTINATIONS = [
+    { id: "caribbean-escape", name: "Caribbean Escape", region: "Caribbean", ports: "Nassau · San Juan · St. Thomas", nights: 7, price: 14835, hue: 195, blurb: "Warm water, short flights, easy first cruise." },
+    { id: "mediterranean-odyssey", name: "Mediterranean Odyssey", region: "Mediterranean", ports: "Barcelona · Rome · Santorini · Dubrovnik", nights: 10, price: 26385, hue: 205, blurb: "Ruins, coastline towns and long dinners." },
+    { id: "alaska-inside-passage", name: "Alaska's Inside Passage", region: "Alaska", ports: "Juneau · Skagway · Ketchikan", nights: 7, price: 19785, hue: 170, blurb: "Glaciers, fjords and wildlife from the deck." },
+    { id: "norwegian-fjords", name: "Norwegian Fjords", region: "Northern Europe", ports: "Bergen · Geiranger · Flåm", nights: 8, price: 29685, hue: 200, blurb: "Waterfalls that drop straight into the sea." },
+    { id: "cape-coast", name: "Cape Town & the Cape Coast", region: "Africa", ports: "Cape Town · Hermanus · Knysna · Mossel Bay", nights: 6, price: 12360, hue: 20, blurb: "Table Mountain, whales, and the Garden Route." },
+    { id: "south-pacific-dream", name: "South Pacific Dream", region: "South Pacific", ports: "Fiji · Bora Bora · Tahiti", nights: 11, price: 36285, hue: 185, blurb: "Lagoons the colour of glass." },
+    { id: "asian-explorer", name: "Asian Explorer", region: "Asia", ports: "Singapore · Bangkok · Hong Kong · Ho Chi Minh City", nights: 9, price: 23085, hue: 350, blurb: "Night markets, temples, and skylines." },
+    { id: "antarctic-expedition", name: "Antarctic Expedition", region: "Polar", ports: "Ushuaia · South Shetland Islands", nights: 12, price: 107235, hue: 210, blurb: "The one trip that changes how you see scale." }
+  ];
+
+  var CABINS = [
+    { id: "interior", label: "Interior", desc: "Comfortable, no window", mult: 1 },
+    { id: "oceanview", label: "Ocean View", desc: "A real window on the sea", mult: 1.35 },
+    { id: "balcony", label: "Balcony", desc: "Your own private deck", mult: 1.8 },
+    { id: "suite", label: "Suite", desc: "Extra space, priority boarding", mult: 2.6 }
+  ];
+
+  var TAX_PER_GUEST = 2130;
+
+  /* ---------------- Sale ---------------- */
+  var SALE_END = new Date("2026-09-25T23:59:59+02:00"); // South African Standard Time
+  var SALE_PERCENT = 40;
+  function saleActive() { return new Date() <= SALE_END; }
+  function saleDaysLeft() {
+    var ms = SALE_END - new Date();
+    return Math.max(0, Math.ceil(ms / 86400000));
+  }
+  function fareFor(dest, cabin) {
+    var full = Math.round(dest.price * cabin.mult);
+    var special = Math.round(full * (1 - SALE_PERCENT / 100));
+    return { full: full, price: saleActive() ? special : full, onSale: saleActive() };
+  }
+
+  /* ---------------- State ---------------- */
+  var state = {
+    filter: "All",
+    selectedDestId: null,
+    booking: null,   // { destId, date, cabinId, guests, name, email, phone }
+    confirmation: null
+  };
+
+  try {
+    var savedBooking = localStorage.getItem("tatw_booking");
+    if (savedBooking) state.booking = JSON.parse(savedBooking);
+    var savedConfirm = localStorage.getItem("tatw_confirmation");
+    if (savedConfirm) state.confirmation = JSON.parse(savedConfirm);
+  } catch (e) { /* storage unavailable — continue without persistence */ }
+
+  function saveBooking() {
+    try { localStorage.setItem("tatw_booking", JSON.stringify(state.booking)); } catch (e) {}
+  }
+  function saveConfirmation() {
+    try { localStorage.setItem("tatw_confirmation", JSON.stringify(state.confirmation)); } catch (e) {}
+  }
+
+  function findDest(id) {
+    for (var i = 0; i < DESTINATIONS.length; i++) if (DESTINATIONS[i].id === id) return DESTINATIONS[i];
+    return null;
+  }
+  function findCabin(id) {
+    for (var i = 0; i < CABINS.length; i++) if (CABINS[i].id === id) return CABINS[i];
+    return CABINS[0];
+  }
+  function money(n) {
+    var s = String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return "R" + s;
+  }
+
+  /* ---------------- Illustrated scene per destination ---------------- */
+  function skyBG(h) {
+    return (
+      '<rect width="300" height="188" fill="hsl(' + h + ',44%,21%)"/>' +
+      '<rect width="300" height="118" fill="hsl(' + h + ',50%,30%)" opacity="0.55"/>' +
+      '<circle cx="238" cy="44" r="19" fill="rgba(227,195,116,0.88)"/>' +
+      '<rect y="122" width="300" height="66" fill="hsl(' + h + ',42%,14%)"/>' +
+      '<path d="M0 122 Q75 112 150 122 T300 122 V188 H0 Z" fill="hsl(' + h + ',46%,19%)" opacity="0.7"/>'
+    );
+  }
+  var SILHOUETTE = "#F5EFE1";
+  var SILHOUETTE_DK = "#0B2E38";
+
+  var SCENES = {
+    "caribbean-escape": function () {
+      return (
+        '<g fill="' + SILHOUETTE_DK + '" opacity="0.92">' +
+          '<path d="M36 188 L40 108 L34 108 Z"/>' +
+          '<path d="M37 112 C10 96 -2 104 -6 118 C14 114 28 112 37 112 Z"/>' +
+          '<path d="M37 112 C58 92 74 96 80 108 C64 108 48 110 37 112 Z"/>' +
+          '<path d="M37 106 C16 84 18 70 30 62 C30 84 34 98 37 106 Z"/>' +
+        '</g>' +
+        '<g fill="' + SILHOUETTE + '" opacity="0.9">' +
+          '<path d="M150 150 L214 150 L202 166 L162 166 Z"/>' +
+          '<rect x="176" y="126" width="4" height="26"/>' +
+          '<path d="M180 130 L200 140 L180 146 Z"/>' +
+        '</g>'
+      );
+    },
+    "mediterranean-odyssey": function () {
+      var row = "";
+      var houses = [[40, 0.65], [66, 0.55], [92, 0.72], [118, 0.5], [144, 0.68], [170, 0.58], [196, 0.7], [222, 0.52]];
+      houses.forEach(function (h) {
+        var x = h[0], scale = h[1], hh = 40 * scale, w = 26 * scale;
+        row += '<rect x="' + (x - w / 2) + '" y="' + (150 - hh) + '" width="' + w + '" height="' + hh + '" fill="' + SILHOUETTE + '" opacity="0.94"/>';
+        row += '<circle cx="' + x + '" cy="' + (150 - hh - w * 0.32) + '" r="' + (w * 0.32) + '" fill="hsl(205,55%,42%)"/>';
+      });
+      return '<g>' + row + '</g><rect x="0" y="150" width="300" height="38" fill="' + SILHOUETTE_DK + '" opacity="0.85"/>';
+    },
+    "alaska-inside-passage": function () {
+      return (
+        '<g fill="' + SILHOUETTE + '" opacity="0.95">' +
+          '<path d="M-10 130 L40 66 L70 100 L110 50 L150 108 L180 74 L220 130 Z"/>' +
+        '</g>' +
+        '<g fill="rgba(255,255,255,0.85)">' +
+          '<path d="M40 66 L48 78 L32 78 Z"/>' +
+          '<path d="M110 50 L120 66 L100 66 Z"/>' +
+        '</g>' +
+        '<g fill="' + SILHOUETTE + '" opacity="0.9">' +
+          '<path d="M220 160 L262 160 L272 172 L210 172 Z"/>' +
+          '<path d="M232 176 L248 176 L242 186 L238 186 Z"/>' +
+        '</g>'
+      );
+    },
+    "norwegian-fjords": function () {
+      return (
+        '<g fill="' + SILHOUETTE + '" opacity="0.95">' +
+          '<path d="M-10 60 L60 30 L84 130 L-10 150 Z"/>' +
+          '<path d="M310 60 L236 26 L214 130 L310 152 Z"/>' +
+        '</g>' +
+        '<rect x="118" y="30" width="5" height="110" fill="rgba(245,239,225,0.55)"/>' +
+        '<g fill="' + SILHOUETTE + '" opacity="0.9">' +
+          '<path d="M130 148 L172 148 L162 160 L140 160 Z"/>' +
+          '<rect x="148" y="134" width="4" height="16"/>' +
+        '</g>'
+      );
+    },
+    "cape-coast": function () {
+      return (
+        '<g fill="' + SILHOUETTE + '" opacity="0.95">' +
+          '<path d="M20 130 L64 62 L200 62 L236 130 Z"/>' +
+          '<path d="M64 62 L200 62 L192 50 L72 50 Z"/>' +
+        '</g>' +
+        '<g fill="' + SILHOUETTE_DK + '" opacity="0.85">' +
+          '<rect x="30" y="120" width="14" height="30"/>' +
+          '<rect x="48" y="108" width="16" height="42"/>' +
+          '<rect x="68" y="126" width="12" height="24"/>' +
+          '<rect x="220" y="114" width="16" height="36"/>' +
+          '<rect x="240" y="128" width="12" height="22"/>' +
+        '</g>'
+      );
+    },
+    "south-pacific-dream": function () {
+      return (
+        '<g fill="' + SILHOUETTE + '" opacity="0.94">' +
+          '<rect x="150" y="128" width="70" height="8"/>' +
+          '<rect x="160" y="136" width="10" height="24"/>' +
+          '<rect x="200" y="136" width="10" height="24"/>' +
+          '<path d="M150 128 L165 108 L220 108 L220 128 Z"/>' +
+        '</g>' +
+        '<g fill="' + SILHOUETTE_DK + '" opacity="0.9">' +
+          '<path d="M46 188 L50 118 L44 118 Z"/>' +
+          '<path d="M47 122 C22 108 12 116 8 128 C24 124 38 122 47 122 Z"/>' +
+          '<path d="M47 122 C66 104 80 108 86 118 C70 118 56 120 47 122 Z"/>' +
+        '</g>'
+      );
+    },
+    "asian-explorer": function () {
+      return (
+        '<g fill="' + SILHOUETTE + '" opacity="0.95">' +
+          '<rect x="30" y="90" width="18" height="60"/>' +
+          '<rect x="54" y="110" width="14" height="40"/>' +
+          '<rect x="74" y="70" width="20" height="80"/>' +
+          '<rect x="100" y="96" width="16" height="54"/>' +
+          '<rect x="200" y="86" width="18" height="64"/>' +
+          '<rect x="224" y="104" width="14" height="46"/>' +
+          '<rect x="244" y="66" width="20" height="84"/>' +
+        '</g>' +
+        '<g fill="hsl(350,45%,42%)" opacity="0.95">' +
+          '<path d="M130 150 L130 60 M116 78 L144 78 M120 96 L140 96 M124 114 L136 114" stroke="hsl(350,45%,42%)" stroke-width="6"/>' +
+          '<path d="M112 60 L148 60 L136 44 L124 44 Z"/>' +
+        '</g>'
+      );
+    },
+    "antarctic-expedition": function () {
+      return (
+        '<g fill="' + SILHOUETTE + '" opacity="0.96">' +
+          '<path d="M-10 150 L20 96 L52 150 Z"/>' +
+          '<path d="M40 150 L78 70 L118 150 Z"/>' +
+          '<path d="M150 150 L176 110 L204 150 Z"/>' +
+        '</g>' +
+        '<g fill="' + SILHOUETTE_DK + '">' +
+          '<ellipse cx="248" cy="164" rx="10" ry="16"/>' +
+          '<circle cx="248" cy="140" r="7"/>' +
+          '<ellipse cx="256" cy="166" rx="4" ry="8" fill="' + SILHOUETTE + '"/>' +
+        '</g>'
+      );
+    }
+  };
+
+  function destArt(dest) {
+    var scene = SCENES[dest.id] ? SCENES[dest.id]() : "";
+    return (
+      '<svg viewBox="0 0 300 188" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:100%;height:100%;">' +
+        skyBG(dest.hue) +
+        scene +
+      '</svg>'
+    );
+  }
+
+  /* ---------------- Render: destination cards ---------------- */
+  function cardHTML(dest) {
+    var onSale = saleActive();
+    var special = Math.round(dest.price * (1 - SALE_PERCENT / 100));
+    var priceBlock = onSale
+      ? '<div class="dest-price"><span>From, per guest</span><s class="was-price">' + money(dest.price) + '</s><strong>' + money(special) + '</strong></div>'
+      : '<div class="dest-price"><span>From, per guest</span><strong>' + money(dest.price) + '</strong></div>';
+    return (
+      '<div class="dest-card">' +
+        '<div class="dest-art">' + destArt(dest) + (onSale ? '<span class="sale-flag">' + SALE_PERCENT + '% off</span>' : '') + '</div>' +
+        '<div class="dest-body">' +
+          '<div class="dest-region">' + dest.region + '</div>' +
+          '<h3>' + dest.name + '</h3>' +
+          '<p class="dest-ports">' + dest.ports + '</p>' +
+          '<p style="font-size:0.86rem;">' + dest.blurb + '</p>' +
+          '<div class="dest-meta">' +
+            priceBlock +
+            '<div class="dest-nights">' + dest.nights + ' nights</div>' +
+          '</div>' +
+          '<button class="btn btn-dark btn-block dest-select" data-select="' + dest.id + '">Select &amp; book</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderHomeGrid() {
+    var picks = [DESTINATIONS[0], DESTINATIONS[1], DESTINATIONS[2], DESTINATIONS[4]];
+    document.getElementById("homeDestGrid").innerHTML = picks.map(cardHTML).join("");
+  }
+
+  function renderFilters() {
+    var row = document.getElementById("filterRow");
+    var all = ["All"].concat(REGIONS);
+    row.innerHTML = all.map(function (r) {
+      return '<button class="pill' + (state.filter === r ? " active" : "") + '" data-filter="' + r + '">' + r + '</button>';
+    }).join("");
+  }
+
+  function renderAllGrid() {
+    var list = state.filter === "All" ? DESTINATIONS : DESTINATIONS.filter(function (d) { return d.region === state.filter; });
+    document.getElementById("allDestGrid").innerHTML = list.map(cardHTML).join("");
+  }
+
+  /* ---------------- Render: booking page ---------------- */
+  function renderBooking() {
+    var wrap = document.getElementById("bookingWrap");
+    var destId = (state.booking && state.booking.destId) || state.selectedDestId;
+    var dest = destId ? findDest(destId) : null;
+
+    if (!dest) {
+      wrap.innerHTML =
+        '<p class="eyebrow-plain">My booking</p>' +
+        '<h2>No sailing selected yet</h2>' +
+        '<div class="panel empty-note" style="margin-top:28px;">' +
+          '<p>Choose a destination first and we\'ll bring it here.</p>' +
+          '<button class="btn btn-gold" data-nav="destinations">Browse destinations</button>' +
+        '</div>';
+      return;
+    }
+
+    var b = state.booking && state.booking.destId === dest.id ? state.booking : { destId: dest.id, date: "", cabinId: "interior", guests: 2, name: "", email: "", phone: "" };
+
+    var todayISO = new Date().toISOString().slice(0, 10);
+
+    var cabinsHTML = CABINS.map(function (c) {
+      var fare = fareFor(dest, c);
+      var sel = b.cabinId === c.id;
+      var priceLabel = fare.onSale
+        ? '<s class="was-price" style="display:inline; margin:0;">' + money(fare.full) + '</s> ' + money(fare.price) + '/guest'
+        : money(fare.price) + '/guest';
+      return (
+        '<label class="cabin-opt' + (sel ? " selected" : "") + '" data-cabin-opt="' + c.id + '">' +
+          '<input type="radio" name="cabin" value="' + c.id + '"' + (sel ? " checked" : "") + '>' +
+          '<strong>' + c.label + '</strong>' +
+          '<span>' + c.desc + ' &middot; ' + priceLabel + '</span>' +
+        '</label>'
+      );
+    }).join("");
+
+    wrap.innerHTML =
+      '<div class="steps"><b>1. Build booking</b> &rarr; 2. Payment &rarr; 3. Confirmation</div>' +
+      '<h2>' + dest.name + '</h2>' +
+      '<p style="margin-top:8px;">' + dest.ports + ' &middot; ' + dest.nights + ' nights</p>' +
+      '<div class="layout-2col">' +
+        '<div class="panel">' +
+          '<div class="field" id="f-date">' +
+            '<label for="in-date">Departure date</label>' +
+            '<input type="date" id="in-date" min="' + todayISO + '" value="' + (b.date || "") + '">' +
+            '<div class="error-msg">Pick a departure date to continue.</div>' +
+          '</div>' +
+          '<div class="field">' +
+            '<label>Cabin type</label>' +
+            '<div class="cabin-grid" id="cabinGrid">' + cabinsHTML + '</div>' +
+          '</div>' +
+          '<div class="field" id="f-guests">' +
+            '<label for="in-guests">Guests</label>' +
+            '<select id="in-guests">' +
+              [1,2,3,4].map(function (n) { return '<option value="' + n + '"' + (b.guests == n ? " selected" : "") + '>' + n + (n === 1 ? " guest" : " guests") + '</option>'; }).join("") +
+            '</select>' +
+          '</div>' +
+          '<div class="field-row">' +
+            '<div class="field" id="f-name">' +
+              '<label for="in-name">Lead passenger name</label>' +
+              '<input type="text" id="in-name" value="' + escAttr(b.name) + '" placeholder="Full name">' +
+              '<div class="error-msg">Enter the lead passenger\'s name.</div>' +
+            '</div>' +
+            '<div class="field" id="f-email">' +
+              '<label for="in-email">Email</label>' +
+              '<input type="email" id="in-email" value="' + escAttr(b.email) + '" placeholder="you@example.com">' +
+              '<div class="error-msg">Enter a valid email address.</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="field" id="f-phone">' +
+            '<label for="in-phone">Phone</label>' +
+            '<input type="tel" id="in-phone" value="' + escAttr(b.phone) + '" placeholder="+27 82 000 0000">' +
+          '</div>' +
+        '</div>' +
+        renderBookingSummary(dest, b) +
+      '</div>';
+
+    // wire up cabin selection
+    var grid = document.getElementById("cabinGrid");
+    grid.addEventListener("change", function (e) {
+      if (e.target.name === "cabin") {
+        b.cabinId = e.target.value;
+        Array.prototype.forEach.call(grid.querySelectorAll(".cabin-opt"), function (el) {
+          el.classList.toggle("selected", el.getAttribute("data-cabin-opt") === b.cabinId);
+        });
+        refreshSummary(dest, b);
+      }
+    });
+    document.getElementById("in-guests").addEventListener("change", function (e) {
+      b.guests = parseInt(e.target.value, 10);
+      refreshSummary(dest, b);
+    });
+    document.getElementById("in-date").addEventListener("change", function (e) { b.date = e.target.value; clearFieldError("f-date"); });
+    document.getElementById("in-name").addEventListener("input", function (e) { b.name = e.target.value; clearFieldError("f-name"); });
+    document.getElementById("in-email").addEventListener("input", function (e) { b.email = e.target.value; clearFieldError("f-email"); });
+    document.getElementById("in-phone").addEventListener("input", function (e) { b.phone = e.target.value; });
+
+    state._draftBooking = b;
+  }
+
+  function renderBookingSummary(dest, b) {
+    var cabin = findCabin(b.cabinId);
+    var fare = fareFor(dest, cabin);
+    var subtotal = fare.price * b.guests;
+    var fullSubtotal = fare.full * b.guests;
+    var savings = fullSubtotal - subtotal;
+    var taxes = TAX_PER_GUEST * b.guests;
+    var total = subtotal + taxes;
+    var subtotalLine = fare.onSale
+      ? '<div class="summary-line"><span>' + cabin.label + ' &times; ' + b.guests + '</span><span><s class="was-price" style="display:inline; margin:0;">' + money(fullSubtotal) + '</s> ' + money(subtotal) + '</span></div>' +
+        '<div class="summary-line discount-line"><span>' + SALE_PERCENT + '% Spring Sail Sale</span><span>&minus;' + money(savings) + '</span></div>'
+      : '<div class="summary-line"><span>' + cabin.label + ' &times; ' + b.guests + '</span><span>' + money(subtotal) + '</span></div>';
+    return (
+      '<div class="panel summary-card" id="bookingSummary">' +
+        '<h3>Trip summary</h3>' +
+        '<p style="font-size:0.85rem; margin-top:2px;">' + dest.name + '</p>' +
+        subtotalLine +
+        '<div class="summary-line"><span>Port fees &amp; taxes</span><span>' + money(taxes) + '</span></div>' +
+        '<div class="summary-total"><span>Total</span><span>' + money(total) + '</span></div>' +
+        (fare.onSale ? '<p class="savings-note">You save ' + money(savings) + ' with the Spring Sail Sale.</p>' : '') +
+        '<button class="btn btn-gold btn-block" style="margin-top:24px;" id="toPaymentBtn">Continue to payment</button>' +
+        '<p style="font-size:0.76rem; margin-top:12px;">Prices are per person, in South African rand, based on double occupancy where applicable, before onboard extras.</p>' +
+      '</div>'
+    );
+  }
+
+  function refreshSummary(dest, b) {
+    var container = document.getElementById("bookingSummary").parentNode;
+    var old = document.getElementById("bookingSummary");
+    old.outerHTML = renderBookingSummary(dest, b);
+    document.getElementById("toPaymentBtn").addEventListener("click", function () { attemptGoToPayment(dest, b); });
+  }
+
+  function clearFieldError(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove("error");
+  }
+
+  function escAttr(s) {
+    return (s || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  }
+
+  function attemptGoToPayment(dest, b) {
+    var ok = true;
+    if (!b.date) { markError("f-date"); ok = false; }
+    if (!b.name || b.name.trim().length < 2) { markError("f-name"); ok = false; }
+    if (!b.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email)) { markError("f-email"); ok = false; }
+    if (!ok) { showToast("Check the highlighted fields."); return; }
+    state.booking = { destId: dest.id, date: b.date, cabinId: b.cabinId, guests: b.guests, name: b.name.trim(), email: b.email.trim(), phone: b.phone.trim() };
+    saveBooking();
+    navigate("payment");
+  }
+
+  function markError(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add("error");
+  }
+
+  // initial wiring for the "continue to payment" button created inside renderBooking
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.id === "toPaymentBtn") {
+      var dest = findDest(state._draftBooking.destId);
+      attemptGoToPayment(dest, state._draftBooking);
+    }
+  });
+
+  /* ---------------- Render: payment page ---------------- */
+  function renderPayment() {
+    var wrap = document.getElementById("paymentWrap");
+    var b = state.booking;
+    if (!b) {
+      wrap.innerHTML =
+        '<p class="eyebrow-plain">Payment</p>' +
+        '<h2>Nothing to pay for yet</h2>' +
+        '<div class="panel empty-note" style="margin-top:28px;">' +
+          '<p>Start by choosing a destination and building your booking.</p>' +
+          '<button class="btn btn-gold" data-nav="destinations">Browse destinations</button>' +
+        '</div>';
+      return;
+    }
+    var dest = findDest(b.destId);
+    var cabin = findCabin(b.cabinId);
+    var fare = fareFor(dest, cabin);
+    var subtotal = fare.price * b.guests;
+    var fullSubtotal = fare.full * b.guests;
+    var savings = fullSubtotal - subtotal;
+    var taxes = TAX_PER_GUEST * b.guests;
+    var total = subtotal + taxes;
+    var paySubtotalLine = fare.onSale
+      ? '<div class="summary-line"><span>Cabin subtotal</span><span><s class="was-price" style="display:inline; margin:0;">' + money(fullSubtotal) + '</s> ' + money(subtotal) + '</span></div>' +
+        '<div class="summary-line discount-line"><span>' + SALE_PERCENT + '% Spring Sail Sale</span><span>&minus;' + money(savings) + '</span></div>'
+      : '<div class="summary-line"><span>Cabin subtotal</span><span>' + money(subtotal) + '</span></div>';
+
+    wrap.innerHTML =
+      '<div class="steps">1. Build booking &rarr; <b>2. Payment</b> &rarr; 3. Confirmation</div>' +
+      '<h2>Pay for your cruise</h2>' +
+      '<div class="layout-2col">' +
+        '<div class="panel">' +
+          '<div class="field" id="p-name">' +
+            '<label for="p-cardname">Name on card</label>' +
+            '<input type="text" id="p-cardname" placeholder="As it appears on the card" value="' + escAttr(b.name) + '">' +
+            '<div class="error-msg">Enter the name on the card.</div>' +
+          '</div>' +
+          '<div class="field" id="p-number">' +
+            '<label for="p-cardnumber">Card number</label>' +
+            '<input type="text" id="p-cardnumber" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="19">' +
+            '<div class="error-msg">Enter a 16-digit card number.</div>' +
+          '</div>' +
+          '<div class="field-row3">' +
+            '<div class="field" id="p-expiry">' +
+              '<label for="p-exp">Expiry (MM/YY)</label>' +
+              '<input type="text" id="p-exp" placeholder="MM/YY" maxlength="5">' +
+              '<div class="error-msg">Use MM/YY.</div>' +
+            '</div>' +
+            '<div class="field" id="p-cvv">' +
+              '<label for="p-cvv-in">CVV</label>' +
+              '<input type="text" id="p-cvv-in" inputmode="numeric" placeholder="123" maxlength="4">' +
+              '<div class="error-msg">3–4 digits.</div>' +
+            '</div>' +
+            '<div class="field">' +
+              '<label for="p-zip">Postal code</label>' +
+              '<input type="text" id="p-zip" placeholder="0000">' +
+            '</div>' +
+          '</div>' +
+          '<p class="hint">This is a demo checkout — no real payment is processed and no card details are transmitted or stored.</p>' +
+        '</div>' +
+        '<div class="panel summary-card">' +
+          '<h3>' + dest.name + '</h3>' +
+          '<p style="font-size:0.85rem;">' + formatDate(b.date) + ' &middot; ' + cabin.label + ' &middot; ' + b.guests + ' guest' + (b.guests > 1 ? "s" : "") + '</p>' +
+          paySubtotalLine +
+          '<div class="summary-line"><span>Port fees &amp; taxes</span><span>' + money(taxes) + '</span></div>' +
+          '<div class="summary-total"><span>Total due</span><span>' + money(total) + '</span></div>' +
+          '<button class="btn btn-gold btn-block" style="margin-top:24px;" id="payBtn">Confirm &amp; pay ' + money(total) + '</button>' +
+          '<button class="btn btn-ghost btn-block" style="margin-top:10px;" data-nav="booking">Edit booking</button>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById("p-cardnumber").addEventListener("input", function (e) {
+      var digits = e.target.value.replace(/\D/g, "").slice(0, 16);
+      e.target.value = digits.replace(/(.{4})/g, "$1 ").trim();
+      clearFieldError("p-number");
+    });
+    document.getElementById("p-exp").addEventListener("input", function (e) {
+      var digits = e.target.value.replace(/\D/g, "").slice(0, 4);
+      if (digits.length > 2) digits = digits.slice(0, 2) + "/" + digits.slice(2);
+      e.target.value = digits;
+      clearFieldError("p-expiry");
+    });
+    document.getElementById("p-cardname").addEventListener("input", function () { clearFieldError("p-name"); });
+    document.getElementById("p-cvv-in").addEventListener("input", function (e) {
+      e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
+      clearFieldError("p-cvv");
+    });
+
+    document.getElementById("payBtn").addEventListener("click", function () {
+      attemptPay(dest, b, total, cabin);
+    });
+  }
+
+  function attemptPay(dest, b, total, cabin) {
+    var ok = true;
+    var name = document.getElementById("p-cardname").value.trim();
+    var number = document.getElementById("p-cardnumber").value.replace(/\s/g, "");
+    var exp = document.getElementById("p-exp").value.trim();
+    var cvv = document.getElementById("p-cvv-in").value.trim();
+
+    if (name.length < 2) { markError("p-name"); ok = false; }
+    if (number.length !== 16) { markError("p-number"); ok = false; }
+    if (!/^\d{2}\/\d{2}$/.test(exp)) { markError("p-expiry"); ok = false; }
+    if (cvv.length < 3) { markError("p-cvv"); ok = false; }
+    if (!ok) { showToast("Check the highlighted payment fields."); return; }
+
+    var payBtn = document.getElementById("payBtn");
+    payBtn.disabled = true;
+    payBtn.innerHTML = '<span class="spinner"></span> Processing...';
+
+    setTimeout(function () {
+      var ref = generateRef();
+      state.confirmation = {
+        ref: ref,
+        destId: dest.id,
+        date: b.date,
+        cabinId: b.cabinId,
+        guests: b.guests,
+        name: b.name,
+        email: b.email,
+        total: total,
+        bookedAt: new Date().toISOString()
+      };
+      saveConfirmation();
+      navigate("confirmation");
+    }, 900);
+  }
+
+  function generateRef() {
+    var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    var out = "TW-";
+    for (var i = 0; i < 6; i++) out += chars[Math.floor(Math.random() * chars.length)];
+    return out;
+  }
+
+  function formatDate(iso) {
+    if (!iso) return "";
+    var d = new Date(iso + "T00:00:00");
+    return d.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  }
+
+  /* ---------------- Render: confirmation page ---------------- */
+  function renderConfirmation() {
+    var wrap = document.getElementById("confirmationWrap");
+    var c = state.confirmation;
+    if (!c) {
+      wrap.innerHTML =
+        '<p class="eyebrow-plain">Confirmation</p>' +
+        '<h2>No confirmed booking yet</h2>' +
+        '<div class="panel empty-note" style="margin-top:28px;">' +
+          '<p>Once you complete payment, your confirmation will appear here.</p>' +
+          '<button class="btn btn-gold" data-nav="destinations">Browse destinations</button>' +
+        '</div>';
+      return;
+    }
+    var dest = findDest(c.destId);
+    var cabin = findCabin(c.cabinId);
+    wrap.innerHTML =
+      '<div class="confirm-wrap">' +
+        '<svg class="stamp" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<circle cx="50" cy="50" r="46" fill="none" stroke="#C89B3C" stroke-width="2"/>' +
+          '<circle cx="50" cy="50" r="38" fill="none" stroke="#C89B3C" stroke-width="1"/>' +
+          '<path d="M32 52 L44 64 L70 36" fill="none" stroke="#C89B3C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>' +
+        '<p class="eyebrow-plain">Booking confirmed</p>' +
+        '<h2>You&rsquo;re all set, ' + firstName(c.name) + '.</h2>' +
+        '<p style="margin-top:10px;">A confirmation has been sent to ' + escHtml(c.email) + '. Keep your reference handy at check-in.</p>' +
+        '<div class="ref-box">' + c.ref + '</div>' +
+        '<div class="panel confirm-summary">' +
+          '<h3>' + dest.name + '</h3>' +
+          '<p style="font-size:0.85rem;">' + dest.ports + '</p>' +
+          '<div class="summary-line"><span>Departs</span><span>' + formatDate(c.date) + '</span></div>' +
+          '<div class="summary-line"><span>Cabin</span><span>' + cabin.label + '</span></div>' +
+          '<div class="summary-line"><span>Guests</span><span>' + c.guests + '</span></div>' +
+          '<div class="summary-line"><span>Lead passenger</span><span>' + escHtml(c.name) + '</span></div>' +
+          '<div class="summary-total"><span>Total paid</span><span>' + money(c.total) + '</span></div>' +
+        '</div>' +
+        '<div class="confirm-actions">' +
+          '<button class="btn btn-dark" onclick="window.print()">Print confirmation</button>' +
+          '<button class="btn btn-gold" id="newBookingBtn">Book another cruise</button>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById("newBookingBtn").addEventListener("click", function () {
+      state.booking = null;
+      state.selectedDestId = null;
+      try { localStorage.removeItem("tatw_booking"); } catch (e) {}
+      navigate("destinations");
+    });
+  }
+
+  function firstName(full) {
+    return (full || "").trim().split(/\s+/)[0] || "there";
+  }
+  function escHtml(s) {
+    return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  /* ---------------- Sale banner ---------------- */
+  function renderBanner() {
+    var el = document.getElementById("saleBanner");
+    if (!saleActive()) { el.innerHTML = ""; return; }
+    var days = saleDaysLeft();
+    var endLabel = SALE_END.toLocaleDateString("en-ZA", { day: "numeric", month: "long", year: "numeric" });
+    var daysText = days <= 0 ? "ends today" : (days === 1 ? "1 day left" : days + " days left");
+    el.innerHTML =
+      '<div class="sale-banner"><div class="sale-banner-inner">' +
+        '<strong>' + SALE_PERCENT + '% off every cruise</strong> — our Spring Sail Sale ends ' + endLabel + ' (' + daysText + ')' +
+      '</div></div>';
+  }
+
+  /* ---------------- Toast ---------------- */
+  var toastTimer = null;
+  function showToast(msg) {
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 2600);
+  }
+
+  /* ---------------- Routing ---------------- */
+  var VIEWS = ["home", "destinations", "booking", "payment", "confirmation"];
+
+  function navigate(view) {
+    if (VIEWS.indexOf(view) === -1) view = "home";
+    window.location.hash = view;
+  }
+
+  function renderView(view) {
+    VIEWS.forEach(function (v) {
+      document.getElementById("view-" + v).classList.toggle("active", v === view);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#mainNav button"), function (btn) {
+      var target = btn.getAttribute("data-nav");
+      btn.classList.toggle("active", target === view || (target === "destinations" && view === "destinations"));
+    });
+    if (view === "home") renderHomeGrid();
+    if (view === "destinations") { renderFilters(); renderAllGrid(); }
+    if (view === "booking") renderBooking();
+    if (view === "payment") renderPayment();
+    if (view === "confirmation") renderConfirmation();
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
+
+  function handleHash() {
+    var view = (window.location.hash || "#home").replace("#", "");
+    renderView(view);
+  }
+
+  window.addEventListener("hashchange", handleHash);
+
+  /* ---------------- Global click delegation ---------------- */
+  document.addEventListener("click", function (e) {
+    var navBtn = e.target.closest("[data-nav]");
+    if (navBtn) { navigate(navBtn.getAttribute("data-nav")); return; }
+
+    var selectBtn = e.target.closest("[data-select]");
+    if (selectBtn) {
+      state.selectedDestId = selectBtn.getAttribute("data-select");
+      // starting a new destination selection resets any in-progress booking for a different cruise
+      if (state.booking && state.booking.destId !== state.selectedDestId) {
+        state.booking = null;
+        try { localStorage.removeItem("tatw_booking"); } catch (err) {}
+      }
+      navigate("booking");
+      return;
+    }
+
+    var filterBtn = e.target.closest("[data-filter]");
+    if (filterBtn) {
+      state.filter = filterBtn.getAttribute("data-filter");
+      renderFilters();
+      renderAllGrid();
+      return;
+    }
+  });
+
+  /* ---------------- Init ---------------- */
+  renderBanner();
+  handleHash();
+})();
+</script>
+</body>
+</html>
